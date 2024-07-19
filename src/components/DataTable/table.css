@@ -1,0 +1,36 @@
+.searchBar {
+    display: flex;
+    padding: none;
+    gap: 3rem;
+    height: fit-content;
+    border-radius: 16px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+
+.searchArea {
+    background: #fafbff;
+    height: 8rem;
+    border-radius: 15px;
+    display: flex;
+    border: 2px solid #cecbcb;
+    justify-content: space-around;
+    align-items: center;
+    gap: 2rem;
+}
+
+.pagination {
+    display: flex;
+    height: 5rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+
+}
+
+.custom-pagination {
+    margin-right: 2.5rem;
+    margin-bottom: 1.5rem;
+}

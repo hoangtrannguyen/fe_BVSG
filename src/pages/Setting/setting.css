@@ -1,0 +1,9 @@
+h1 {
+    color: rgb(0, 0, 0);
+}
+
+.StyledBox {
+    display: flex;
+    background-color: #ffffff;
+    /*background-image: linear-gradient(317deg, #111b35 0%, #3e5283 48%, #29395f 100%); */
+}
