@@ -1,25 +1,23 @@
-.searchBar {
-    display: flex;
-    padding: none;
-    gap: 3rem;
-    height: fit-content;
-    border-radius: 16px;
-    justify-content: space-around;
-    align-items: center;
-}
-
-
-
 .searchArea {
     background: #fafbff;
-    height: 8rem;
+    height: max-content;
     border-radius: 15px;
     display: flex;
     border: 2px solid #cecbcb;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
+    padding: 1rem;
+
 }
+
+.searchBar {
+    display: flex;
+    width: 90%;
+    align-items: center;
+    height: fit-content;
+}
+
 
 .pagination {
     display: flex;
@@ -27,7 +25,6 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-
 }
 
 .custom-pagination {
