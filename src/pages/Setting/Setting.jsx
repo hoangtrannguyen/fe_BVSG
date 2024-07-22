@@ -8,11 +8,11 @@ const Setting = () => {
     <>
       <Box className="StyledBox">
         <SideNav></SideNav>
-        <Box component="main" sx={{ flexGrow: 1, padding: 3 }}>
+        <Box component="main" sx={{ flexGrow: 1, padding: 3, marginTop: 5 }}>
           <Typography
             variant="H1"
             component="H1"
-            marginTop={5}
+            marginTop={2}
             marginBottom={2}
           >
             Quản lý nhân viên
@@ -20,10 +20,6 @@ const Setting = () => {
           <UserTable />
         </Box>
       </Box>
-      {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <h1>Quản lý nhân viên</h1>
-        <UserTable />
-      </Box> */}
     </>
   );
 };
