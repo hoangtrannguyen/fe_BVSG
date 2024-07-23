@@ -90,12 +90,8 @@ export default function ResponsiveNav() {
     const handleLocationChange = () => {
       setSelectedTab(window.location.pathname);
     };
-
-    handleLocationChange(); // Set the initial tab on component mount
-
-    // Listen for changes in the location
+    handleLocationChange();
     window.addEventListener("popstate", handleLocationChange);
-
     return () => {
       window.removeEventListener("popstate", handleLocationChange);
     };

@@ -2,8 +2,15 @@ import React from "react";
 import { TableRow, TableCell, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { StyledTableBody, StyledTableRow } from "./tableStyle";
+
+const getFormattedDate = (dateString) => {
+  if (dateString) {
+    const date = new Date(dateString);
+    return isValid(date) ? format(date, "yyyy-MM-dd") : "";
+  }
+};
 
 function UserTableBody({ data, page, rowsPerPage, handleEdit, handleDelete }) {
   return (
@@ -12,7 +19,7 @@ function UserTableBody({ data, page, rowsPerPage, handleEdit, handleDelete }) {
         <StyledTableRow key={user.id}>
           <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
           <TableCell>{user.code}</TableCell>
-          <TableCell>{format(new Date(user.date), "dd/MM/yyyy")}</TableCell>
+          <TableCell>{getFormattedDate(user.date)}</TableCell>
           <TableCell>{user.fullName}</TableCell>
           <TableCell>{user.citizenId}</TableCell>
           <TableCell>{user.email}</TableCell>

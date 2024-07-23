@@ -75,7 +75,7 @@ function FetchData() {
     try {
       const response = await axios.post("api/Employees", newUser);
       if (response.data.responseStatus.responseCode === 200) {
-        setData((prevData) => [...prevData, response.data.responseData]);
+        //setData((prevData) => [...prevData, response.data.responseData]);
         handleSuccess(response.data.responseStatus.responseMessage);
       }
     } catch (error) {

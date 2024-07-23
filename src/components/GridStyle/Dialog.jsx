@@ -77,8 +77,10 @@ const UserDialog = ({
   };
 
   const getFormattedDate = (dateString) => {
-    const date = new Date(dateString);
-    return isValid(date) ? format(date, "yyyy-MM-dd") : "";
+    if (dateString) {
+      const date = new Date(dateString);
+      return isValid(date) ? format(date, "yyyy-MM-dd") : "";
+    }
   };
 
   console.log(newUser);
@@ -253,7 +255,7 @@ const UserDialog = ({
                 name="dateOfBirth"
                 label="Ngày sinh"
                 type="date"
-                value={getFormattedDate(newUser.dateStartWork)}
+                value={getFormattedDate(newUser.dateOfBirth)}
                 onChange={handleChange}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
