@@ -12,9 +12,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { format } from "date-fns";
 
-function UserCard({ user, handleEdit, handleDelete }) {
+const colors = ["#e9efff", "#fafbff"];
+
+function UserCard({ user, handleEdit, handleDelete, index }) {
   return (
-    <Card variant="outlined" sx={{ marginBottom: "15px", marginTop: "15px" }}>
+    <Card
+      variant="outlined"
+      sx={{
+        marginBottom: "15px",
+        marginTop: "15px",
+        backgroundColor: colors[index % colors.length],
+        "&:hover": {
+          backgroundColor: "#dae4ff",
+        },
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -33,7 +45,7 @@ function UserCard({ user, handleEdit, handleDelete }) {
             <EditIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleDelete(user.id)}
+            onClick={() => handleDelete(user)}
             color="error"
             sx={{ fontSize: ".5rem", padding: "0", paddingRight: "10px" }}
           >
@@ -45,15 +57,15 @@ function UserCard({ user, handleEdit, handleDelete }) {
         <Grid container spacing={1}>
           <Grid item xs={4}>
             <Typography variant="body2" color="textSecondary">
-              ID :
+              Mã nhân viên
             </Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="body1">{user.id}</Typography>
+            <Typography variant="body1">{user.code}</Typography>
           </Grid>
           <Grid item xs={4}>
             <Typography variant="body2" color="textSecondary">
-              Date work:
+              Ngày vào
             </Typography>
           </Grid>
           <Grid item xs={8}>
@@ -63,7 +75,7 @@ function UserCard({ user, handleEdit, handleDelete }) {
           </Grid>
           <Grid item xs={4}>
             <Typography variant="body2" color="textSecondary">
-              Full Name:
+              Họ tên
             </Typography>
           </Grid>
           <Grid item xs={8}>
@@ -71,7 +83,7 @@ function UserCard({ user, handleEdit, handleDelete }) {
           </Grid>
           <Grid item xs={4}>
             <Typography variant="body2" color="textSecondary">
-              Citizen Id:
+              CCCD
             </Typography>
           </Grid>
           <Grid item xs={8}>
@@ -79,7 +91,7 @@ function UserCard({ user, handleEdit, handleDelete }) {
           </Grid>
           <Grid item xs={4}>
             <Typography variant="body2" color="textSecondary">
-              Phone:
+              Điện thoại
             </Typography>
           </Grid>
           <Grid item xs={8}>
@@ -87,7 +99,7 @@ function UserCard({ user, handleEdit, handleDelete }) {
           </Grid>
           <Grid item xs={4}>
             <Typography variant="body2" color="textSecondary">
-              Email:
+              Email
             </Typography>
           </Grid>
           <Grid item xs={8}>

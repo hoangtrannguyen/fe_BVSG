@@ -13,7 +13,6 @@ function FetchData() {
   const [userDetail, setUserDetail] = useState(null);
 
   const handleError = (error) => {
-    console.log(error);
     let errorMessage = "An unexpected error occurred.";
 
     if (error.response) {
@@ -46,12 +45,12 @@ function FetchData() {
   };
 
   const fetchData = useCallback(
-    async (page, pageSize, fullName, nameEnglish, citizenId) => {
+    async (page, pageSize, fullName, code, citizenId) => {
       setLoading(true);
 
       const queryParams = new URLSearchParams();
       if (fullName) queryParams.append("FullName", fullName);
-      if (nameEnglish) queryParams.append("NameEnglish", nameEnglish);
+      if (code) queryParams.append("Code", code);
       if (citizenId) queryParams.append("CitizenId", citizenId);
 
       queryParams.append("PageNumber", page);

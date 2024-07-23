@@ -21,6 +21,8 @@ import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import StorageIcon from "@mui/icons-material/Storage";
+import BadgeIcon from "@mui/icons-material/Badge";
+import HomeIcon from "@mui/icons-material/Home";
 
 const drawerWidth = 240;
 
@@ -77,14 +79,27 @@ const Drawer = styled(MuiDrawer, {
 export default function ResponsiveNav() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const [selectedTab, setSelectedTab] = React.useState(
+    window.location.pathname
+  );
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  React.useEffect(() => {
+    const handleLocationChange = () => {
+      setSelectedTab(window.location.pathname);
+    };
+
+    handleLocationChange(); // Set the initial tab on component mount
+
+    // Listen for changes in the location
+    window.addEventListener("popstate", handleLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, []);
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -95,46 +110,68 @@ export default function ResponsiveNav() {
   };
 
   const handleNavigation = (path) => {
+    setSelectedTab(path);
     navigate(path);
     handleMenuClose();
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
   };
 
   const drawerContent = (
     <div>
       <DrawerHeader>
-        {open ? (
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        ) : (
-          <IconButton onClick={handleDrawerOpen}>
+        <IconButton onClick={() => setOpen(!open)}>
+          {theme.direction === "rtl" ? (
             <ChevronRightIcon />
-          </IconButton>
-        )}
+          ) : (
+            <ChevronLeftIcon />
+          )}
+        </IconButton>
       </DrawerHeader>
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation("/")}>
-            <ListItemText primary="Home" />
+          <ListItemButton
+            onClick={() => handleNavigation("/")}
+            sx={{
+              backgroundColor:
+                selectedTab === "/" ? theme.palette.action.selected : "inherit",
+            }}
+          >
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Trang chủ" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation("/About")}>
+          <ListItemButton
+            onClick={() => handleNavigation("/About")}
+            sx={{
+              backgroundColor:
+                selectedTab === "/About"
+                  ? theme.palette.action.selected
+                  : "inherit",
+            }}
+          >
+            <ListItemIcon>
+              <StorageIcon />
+            </ListItemIcon>
             <ListItemText primary="About" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => handleNavigation("/Setting")}>
-            <ListItemText primary="Setting" />
+          <ListItemButton
+            onClick={() => handleNavigation("/Setting")}
+            sx={{
+              backgroundColor:
+                selectedTab === "/Setting"
+                  ? theme.palette.action.selected
+                  : "inherit",
+            }}
+          >
+            <ListItemIcon>
+              <BadgeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Quản lý nhân viên" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -145,155 +182,57 @@ export default function ResponsiveNav() {
     <div>
       {isMobile ? (
         <>
-          <div>
-            {" "}
-            <AppBarStyled position="fixed">
-              <Toolbar>
-                <IconButton
-                  color="inherit"
-                  aria-label="open drawer"
-                  onClick={handleMenuOpen}
-                  edge="start"
-                  sx={{ mr: 2 }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                >
-                  <MenuItem onClick={() => handleNavigation("/")}>
-                    Home
-                  </MenuItem>
-                  <MenuItem onClick={() => handleNavigation("/About")}>
-                    About
-                  </MenuItem>
-                  <MenuItem onClick={() => handleNavigation("/Setting")}>
-                    Setting
-                  </MenuItem>
-                </Menu>
-                <Typography variant="h6" noWrap component="div">
-                  BVSG
-                </Typography>
-              </Toolbar>
-            </AppBarStyled>
-            <Drawer
-              variant="temporary"
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-              ModalProps={{
-                keepMounted: true,
-              }}
-              sx={{
-                display: { xs: "block", sm: "none" },
-                "& .MuiDrawer-paper": {
-                  width: drawerWidth,
-                },
-              }}
-            >
-              {drawerContent}
-            </Drawer>
-          </div>
+          <AppBarStyled position="fixed">
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleMenuOpen}
+                edge="start"
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={() => handleNavigation("/")}>Home</MenuItem>
+                <MenuItem onClick={() => handleNavigation("/About")}>
+                  About
+                </MenuItem>
+                <MenuItem onClick={() => handleNavigation("/Setting")}>
+                  Quản lý nhân viên
+                </MenuItem>
+              </Menu>
+              <Typography variant="h6" noWrap component="div">
+                BVSG
+              </Typography>
+            </Toolbar>
+          </AppBarStyled>
+          <Drawer
+            variant="temporary"
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            ModalProps={{
+              keepMounted: true,
+            }}
+            sx={{
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                width: drawerWidth,
+              },
+            }}
+          >
+            {drawerContent}
+          </Drawer>
         </>
       ) : (
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
           <Drawer variant="permanent" open={open}>
-            <DrawerHeader>
-              <IconButton onClick={() => setOpen(!open)}>
-                {theme.direction === "rtl" ? (
-                  <ChevronRightIcon />
-                ) : (
-                  <ChevronLeftIcon />
-                )}
-              </IconButton>
-            </DrawerHeader>
-            <Divider />
-            <List>
-              <ListItem
-                disablePadding
-                sx={{ display: "block" }}
-                onClick={() => navigate("/")}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <StorageIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            </List>
-            <List>
-              <ListItem
-                disablePadding
-                sx={{ display: "block" }}
-                onClick={() => navigate("/About")}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <StorageIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="About"
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
-            <List>
-              <ListItem
-                disablePadding
-                sx={{ display: "block" }}
-                onClick={() => navigate("/Setting")}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <StorageIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Setting"
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
+            {drawerContent}
           </Drawer>
         </Box>
       )}

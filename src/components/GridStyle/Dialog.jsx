@@ -16,11 +16,12 @@ import {
   Alert,
   Box,
 } from "@mui/material";
+import { format, parse, isValid } from "date-fns";
 
 import GridTitle from "./gridHead";
 import GridValue from "./gridValue";
 import FormRow from "./FormGrid";
-import { format } from "date-fns";
+
 const UserDialog = ({
   open,
   handleClose,
@@ -34,6 +35,8 @@ const UserDialog = ({
   const [errors, setErrors] = useState({});
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const validateFields = () => {
     const newErrors = {};
     if (!newUser.fullName) newErrors.fullName = "Họ và tên là bắt buộc nhập";
@@ -41,6 +44,9 @@ const UserDialog = ({
     if (!newUser.phone) newErrors.phone = "Số điện thoại là bắt buộc nhập";
     if (!newUser.dateStartWork)
       newErrors.dateStartWork = "Ngày bắt đầu làm việc là bắt buộc nhập";
+    if (newUser.email && !emailRegex.test(newUser.email)) {
+      newErrors.email = "Email không đúng định dạng";
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       setSnackbarMessage("Xin vui lòng điền đầy đủ thông tin");
@@ -69,6 +75,12 @@ const UserDialog = ({
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
+
+  const getFormattedDate = (dateString) => {
+    const date = new Date(dateString);
+    return isValid(date) ? format(date, "yyyy-MM-dd") : "";
+  };
+
   console.log(newUser);
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
@@ -190,6 +202,8 @@ const UserDialog = ({
                 value={newUser.email}
                 onChange={handleChange}
                 fullWidth
+                error={!!errors.email}
+                helperText={errors.email}
               />
             </GridValue>
           </FormRow>
@@ -239,7 +253,7 @@ const UserDialog = ({
                 name="dateOfBirth"
                 label="Ngày sinh"
                 type="date"
-                value={newUser.dateOfBirth}
+                value={getFormattedDate(newUser.dateStartWork)}
                 onChange={handleChange}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
@@ -384,7 +398,7 @@ const UserDialog = ({
                 name="dateStartWork"
                 label="Ngày bắt đầu làm việc"
                 type="date"
-                value={format(new Date(newUser.dateStartWork), "dd-MM-yyyy")}
+                value={getFormattedDate(newUser.dateStartWork)}
                 onChange={handleChange}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
@@ -422,7 +436,7 @@ const UserDialog = ({
                 name="militaryTime"
                 label="Thời gian nghĩa vụ"
                 type="date"
-                value={newUser.militaryTime}
+                value={getFormattedDate(newUser.militaryTime)}
                 onChange={handleChange}
                 fullWidth
                 InputLabelProps={{ shrink: true }}

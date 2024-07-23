@@ -18,9 +18,9 @@ function UserTablePagination({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         labelDisplayedRows={({ from, to, count, page }) =>
-          `Page ${page + 1} of ${Math.ceil(
+          `Trang ${page + 1} trên ${Math.ceil(
             count / rowsPerPage
-          )}  | Num of Users : ${count} `
+          )}  | Số lượng : ${count} `
         }
         ActionsComponent={() => null}
         sx={{ position: "sticky", bottom: 0 }}

@@ -18,6 +18,8 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Box,
+  Pagination,
 } from "@mui/material";
 
 const StyledTableContainer = styled(TableContainer)`
@@ -80,8 +82,8 @@ function UserTable() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [findUser, setFindUser] = useState({
     FullName: "",
+    Code: "",
     CitizenId: "",
-    NameEnglish: "",
   });
 
   const [open, setOpen] = useState(false);
@@ -130,19 +132,39 @@ function UserTable() {
       page,
       rowsPerPage,
       findUser.FullName,
-      findUser.NameEnglish,
+      findUser.Code,
       findUser.CitizenId
     );
     setPage(1);
+  };
+
+  const handleResetFindUser = () => {
+    setPage(1);
     resetFindUser();
   };
+
+  useEffect(() => {
+    if (
+      findUser.FullName === "" &&
+      findUser.CitizenId === "" &&
+      findUser.Code === ""
+    ) {
+      fetchData(
+        page,
+        rowsPerPage,
+        findUser.FullName,
+        findUser.Code,
+        findUser.CitizenId
+      );
+    }
+  }, [findUser, fetchData, rowsPerPage]);
 
   const handleDelete = async () => {
     if (userToDelete) {
       try {
         await deleteUser(userToDelete.id);
         fetchData(page, rowsPerPage);
-        handleCloseF(); // Close dialog after successful deletion
+        handleCloseF();
       } catch (error) {
         // Handle error
       }
@@ -190,7 +212,7 @@ function UserTable() {
     setFindUser({
       FullName: "",
       CitizenId: "",
-      NameEnglish: "",
+      Code: "",
     });
   };
 
@@ -199,7 +221,7 @@ function UserTable() {
   }, [page, rowsPerPage, fetchData]);
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage + 1);
+    setPage(newPage); // Pagination bắt đầu từ 1
   };
 
   const handleSwitchChange = (event) => {
@@ -234,17 +256,29 @@ function UserTable() {
           handleCreate={handleCreate}
           isEditMode={isEditMode}
           handleUpdate={handleUpdate}
+          handleResetFindUser={handleResetFindUser}
         />
       </div>
       {isSmallScreen ? (
-        data.map((user) => (
-          <UserCard
-            key={user.id}
-            user={user}
-            handleEdit={handleEdit}
-            handleDelete={() => handleClickOpenF(user)}
-          />
-        ))
+        <>
+          {data.map((user, index) => (
+            <UserCard
+              key={user.id}
+              user={user}
+              index={index}
+              handleEdit={handleEdit}
+              handleDelete={(user) => handleClickOpenF(user)}
+            />
+          ))}
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Pagination
+              count={Math.ceil(total / rowsPerPage)}
+              page={page}
+              onChange={handleChangePage}
+              sx={{ position: "sticky", bottom: 0 }}
+            />
+          </Box>
+        </>
       ) : (
         <StyledTableContainer>
           <Table component={Paper}>
@@ -257,27 +291,7 @@ function UserTable() {
               handleDelete={(user) => handleClickOpenF(user)}
             />
           </Table>
-          <Dialog
-            open={openF}
-            onClose={handleCloseF}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              Bạn có chắn chắn muốn xóa
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Bạn sẽ không thể khôi phục dữ liệu này sau khi xóa.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseF}>Không</Button>
-              <Button onClick={handleDelete} color="primary" autoFocus>
-                Có
-              </Button>
-            </DialogActions>
-          </Dialog>
+
           <UserTablePagination
             count={total}
             rowsPerPage={rowsPerPage}
@@ -287,6 +301,20 @@ function UserTable() {
           />
         </StyledTableContainer>
       )}
+      <Dialog open={openF} onClose={handleCloseF}>
+        <DialogTitle>Bạn có chắn chắn muốn xóa</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Bạn sẽ không thể khôi phục dữ liệu này sau khi xóa.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseF}>Không</Button>
+          <Button onClick={handleDelete} color="primary" autoFocus>
+            Có
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

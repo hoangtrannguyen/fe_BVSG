@@ -4,6 +4,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import UserDialog from "../GridStyle/Dialog";
 
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+
 function SearchAndActions({
   isSmallScreen,
   findUser,
@@ -18,6 +20,7 @@ function SearchAndActions({
   handleCreate,
   isEditMode,
   handleUpdate,
+  handleResetFindUser,
 }) {
   return (
     <Box
@@ -35,17 +38,17 @@ function SearchAndActions({
         }}
       >
         <Typography
-          variant="h6"
+          variant="h8"
           sx={{ display: isSmallScreen ? "none" : "default" }}
         >
-          Search:
+          Search
         </Typography>
         <TextField
           size="small"
-          name="NameEnglish"
+          name="Code"
           label="Mã nhân viên"
           variant="filled"
-          value={findUser.code}
+          value={findUser.Code}
           onChange={handleFindChange}
           fullWidth
         />
@@ -76,21 +79,67 @@ function SearchAndActions({
           flexDirection: isSmallScreen ? "column" : "row",
           gap: isSmallScreen ? "1rem" : "1.5rem",
           justifyContent: isSmallScreen ? "center" : "flex-start",
-          width: "fit-content",
-          marginRight: "1rem",
+          width: isSmallScreen ? "60%" : "fit-content",
         }}
       >
-        <Button variant="contained" onClick={handleFind}>
-          <SearchIcon />
-        </Button>
-        <IconButton
+        {isSmallScreen ? (
+          <Button
+            variant="contained"
+            onClick={handleFind}
+            sx={{
+              backgroundColor: "skyblue",
+              borderRadius: isSmallScreen ? "" : "20%",
+              "&:hover": { backgroundColor: "#a0b7f7" },
+            }}
+          >
+            <SearchIcon />
+          </Button>
+        ) : (
+          <Box
+            gap={3}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <Button
+              variant="contained"
+              onClick={handleFind}
+              sx={{
+                backgroundColor: "skyblue",
+                borderRadius: isSmallScreen ? "" : "20%",
+                "&:hover": { backgroundColor: "#a0b7f7" },
+              }}
+            >
+              <SearchIcon />
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleResetFindUser}
+              sx={{
+                backgroundColor: "skyblue",
+                width: "50px",
+                height: "50px",
+                borderRadius: isSmallScreen ? "" : "20%",
+                "&:hover": { backgroundColor: "#a0b7f7" },
+              }}
+            >
+              <RestartAltIcon />
+            </Button>
+          </Box>
+        )}
+
+        <Button
           variant="contained"
           onClick={handleClickOpen}
           color="primary"
+          sx={{
+            borderRadius: isSmallScreen ? "" : "20%",
+            "&:hover": { backgroundColor: "#a0b7f7" },
+          }}
         >
           <AddIcon />
-          <Typography>Add employee</Typography>
-        </IconButton>
+        </Button>
       </Box>
       <UserDialog
         open={open}
@@ -101,6 +150,7 @@ function SearchAndActions({
         handleCreate={handleCreate}
         isEditMode={isEditMode}
         handleUpdate={handleUpdate}
+        handleResetFindUser={handleResetFindUser}
       />
     </Box>
   );
