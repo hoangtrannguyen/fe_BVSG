@@ -81,11 +81,11 @@ function UserTable() {
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
-  const [findUser, setFindUser] = useState({
-    FullName: "",
-    Code: "",
-    CitizenId: "",
-  });
+  const [searchFields, setSearchFields] = useState([
+    { name: "Code", label: "Mã nhân viên", value: "" },
+    { name: "FullName", label: "Họ và tên", value: "" },
+    { name: "CitizenId", label: "CMDN/CCCD", value: "" },
+  ]);
 
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -109,15 +109,20 @@ function UserTable() {
     }
   }, [userDetail]);
 
-  const handleFindChange = (e) => {
-    setFindUser({ ...findUser, [e.target.name]: e.target.value });
+  const handleFindChange = (e, fieldName) => {
+    setSearchFields((prevFields) =>
+      prevFields.map((field) =>
+        field.name === fieldName ? { ...field, value: e.target.value } : field
+      )
+    );
   };
 
   const handleCreate = () => {
     createUser(newUser);
     resetUser();
     setOpen(false);
-    fetchData(page, rowsPerPage);
+    const searchParams = getSearchParams(searchFields);
+    fetchData(page, rowsPerPage, searchParams);
   };
 
   const handleUpdate = (id) => {
@@ -125,17 +130,22 @@ function UserTable() {
     resetUser();
     setIsEditMode(false);
     setOpen(false);
-    fetchData(page, rowsPerPage);
+    const searchParams = getSearchParams(searchFields);
+    fetchData(page, rowsPerPage, searchParams);
+  };
+  const getSearchParams = (fields) => {
+    return fields.reduce((params, field) => {
+      if (field.value.trim() !== "") {
+        params[field.name] = field.value;
+      }
+      return params;
+    }, {});
   };
 
   const handleFind = () => {
-    fetchData(
-      page,
-      rowsPerPage,
-      findUser.FullName,
-      findUser.Code,
-      findUser.CitizenId
-    );
+    const searchParams = getSearchParams(searchFields);
+
+    fetchData(page, rowsPerPage, searchParams);
     setPage(1);
   };
 
@@ -145,30 +155,23 @@ function UserTable() {
   };
 
   const handleExport = () => {
-    exportUser(findUser.Code, findUser.FullName, findUser.CitizenId);
+    const searchParams = getSearchParams(searchFields);
+
+    exportUser(searchParams);
   };
 
   useEffect(() => {
-    if (
-      findUser.FullName === "" &&
-      findUser.CitizenId === "" &&
-      findUser.Code === ""
-    ) {
-      fetchData(
-        page,
-        rowsPerPage,
-        findUser.FullName,
-        findUser.Code,
-        findUser.CitizenId
-      );
-    }
-  }, [findUser, fetchData, rowsPerPage]);
+    const searchParams = getSearchParams(searchFields);
+
+    fetchData(page, rowsPerPage, searchParams);
+  }, [fetchData, page, rowsPerPage]);
 
   const handleDelete = async () => {
     if (userToDelete) {
       try {
         await deleteUser(userToDelete.id);
-        fetchData(page, rowsPerPage);
+        const searchParams = getSearchParams(searchFields);
+        fetchData(page, rowsPerPage, searchParams);
         handleCloseF();
       } catch (error) {}
     }
@@ -210,21 +213,15 @@ function UserTable() {
       familyStatus: "",
     });
   };
-
   const resetFindUser = () => {
-    setFindUser({
-      FullName: "",
-      CitizenId: "",
-      Code: "",
-    });
+    setSearchFields((prevFields) =>
+      prevFields.map((field) => ({ ...field, value: "" }))
+    );
+    setPage(1);
   };
 
-  useEffect(() => {
-    fetchData(page, rowsPerPage);
-  }, [page, rowsPerPage, fetchData]);
-
   const handleChangePage = (event, newPage) => {
-    setPage(newPage); // Pagination bắt đầu từ 1
+    setPage(newPage);
   };
 
   const handleSwitchChange = (event) => {
@@ -248,7 +245,7 @@ function UserTable() {
         <SearchAndActions
           isSmallScreen={isSmallScreen}
           handleFind={handleFind}
-          findUser={findUser}
+          searchFields={searchFields}
           handleFindChange={handleFindChange}
           handleClickOpen={handleClickOpen}
           open={open}

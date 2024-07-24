@@ -46,38 +46,30 @@ function FetchData() {
     setOpenSnackbar(true);
   };
 
-  const fetchData = useCallback(
-    async (page, pageSize, fullName, code, citizenId) => {
-      setLoading(true);
+  const fetchData = useCallback(async (page, pageSize, searchParams) => {
+    setLoading(true);
 
-      const queryParams = new URLSearchParams();
-      if (fullName) queryParams.append("FullName", fullName);
-      if (code) queryParams.append("Code", code);
-      if (citizenId) queryParams.append("CitizenId", citizenId);
+    const query = new URLSearchParams({
+      ...searchParams,
+      PageNumber: page,
+      PageSize: pageSize,
+    }).toString();
 
-      queryParams.append("PageNumber", page);
-      queryParams.append("PageSize", pageSize);
-
-      try {
-        const token = Cookies.get("token"); // Lấy token từ cookie
-        const response = await axios.get(
-          `api/Employees?${queryParams.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Gửi token nếu cần
-            },
-          }
-        );
-        setData(response.data.responseData);
-        setTotal(response.data.responseTotal);
-      } catch (error) {
-        handleError(error);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [] // Không cần token trong dependency array nữa
-  );
+    try {
+      const token = Cookies.get("token");
+      const response = await axios.get(`api/Employees?${query}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setData(response.data.responseData);
+      setTotal(response.data.responseTotal);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const createUser = async (newUser) => {
     try {
@@ -95,17 +87,13 @@ function FetchData() {
     }
   };
 
-  const exportUser = async (code, fullName, citizenId) => {
+  const exportUser = async (searchParams) => {
     setLoading(true);
-    const queryParams = new URLSearchParams();
-    if (fullName) queryParams.append("FullName", fullName);
-    if (code) queryParams.append("Code", code);
-    if (citizenId) queryParams.append("CitizenId", citizenId);
-
+    const query = new URLSearchParams(searchParams).toString();
     try {
       const token = Cookies.get("token"); // Lấy token từ cookie
       const response = await axios.post(
-        `api/Employees/export?${queryParams.toString()}`,
+        `api/Employees/export?${query}`,
         {},
         {
           responseType: "blob",

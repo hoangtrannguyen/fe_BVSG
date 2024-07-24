@@ -8,7 +8,7 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
 function SearchAndActions({
   isSmallScreen,
-  findUser,
+  searchFields,
   handleFindChange,
   handleFind,
   handleClickOpen,
@@ -44,35 +44,19 @@ function SearchAndActions({
         >
           Search
         </Typography>
-        <TextField
-          size="small"
-          name="Code"
-          label="Mã nhân viên"
-          variant="filled"
-          value={findUser.Code}
-          onChange={handleFindChange}
-          fullWidth
-        />
-        <TextField
-          size="small"
-          autoFocus
-          name="FullName"
-          label="Họ và tên"
-          variant="filled"
-          value={findUser.FullName}
-          onChange={handleFindChange}
-          fullWidth
-        />
 
-        <TextField
-          size="small"
-          name="CitizenId"
-          label="CMDN/CCCD"
-          variant="filled"
-          value={findUser.CitizenId}
-          onChange={handleFindChange}
-          fullWidth
-        />
+        {searchFields.map((field) => (
+          <TextField
+            key={field.name}
+            size="small"
+            name={field.name}
+            label={field.label}
+            variant="filled"
+            value={field.value}
+            onChange={(e) => handleFindChange(e, field.name)}
+            fullWidth
+          />
+        ))}
       </Box>
       <Box
         sx={{
