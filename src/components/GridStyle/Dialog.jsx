@@ -199,7 +199,7 @@ const UserDialog = ({
                 margin="dense"
                 name="email"
                 label="Email"
-                value={newUser.email}
+                value={newUser.email || ""}
                 onChange={handleChange}
                 fullWidth
                 error={!!errors.email}
