@@ -82,8 +82,6 @@ const UserDialog = ({
       return isValid(date) ? format(date, "yyyy-MM-dd") : "";
     }
   };
-
-  console.log(newUser);
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
       <DialogTitle color="#183c8c" bgcolor="#dce3f6" fontSize="bold">

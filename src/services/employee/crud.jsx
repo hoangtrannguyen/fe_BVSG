@@ -75,11 +75,53 @@ function FetchData() {
     try {
       const response = await axios.post("api/Employees", newUser);
       if (response.data.responseStatus.responseCode === 200) {
-        //setData((prevData) => [...prevData, response.data.responseData]);
         handleSuccess(response.data.responseStatus.responseMessage);
       }
     } catch (error) {
       handleError(error);
+    }
+  };
+
+  const exportUser = async (code, fullName, citizenId) => {
+    setLoading(true);
+    const queryParams = new URLSearchParams();
+    if (fullName) queryParams.append("FullName", fullName);
+    if (code) queryParams.append("Code", code);
+    if (citizenId) queryParams.append("CitizenId", citizenId);
+
+    try {
+      const response = await axios.post(
+        `api/Employees/export?${queryParams.toString()}`,
+        {},
+        {
+          responseType: "blob",
+        }
+      );
+
+      const disposition = response.headers["content-disposition"];
+      const filename = disposition
+        ? disposition.split(";")[1].trim().split("=")[1].replace(/"/g, "")
+        : "download.xlsx";
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Cleanup URL object
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      handleError(error);
+      console.error("Error downloading the file:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -135,6 +177,7 @@ function FetchData() {
     deleteUser,
     fetchData,
     findById,
+    exportUser,
     userDetail,
     SnackbarComponent: (
       <Snackbar

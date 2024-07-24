@@ -36,6 +36,7 @@ function UserTable() {
     createUser,
     updateUser,
     deleteUser,
+    exportUser,
     findById,
     userDetail,
     SnackbarComponent,
@@ -143,6 +144,10 @@ function UserTable() {
     resetFindUser();
   };
 
+  const handleExport = () => {
+    exportUser(findUser.Code, findUser.FullName, findUser.CitizenId);
+  };
+
   useEffect(() => {
     if (
       findUser.FullName === "" &&
@@ -165,9 +170,7 @@ function UserTable() {
         await deleteUser(userToDelete.id);
         fetchData(page, rowsPerPage);
         handleCloseF();
-      } catch (error) {
-        // Handle error
-      }
+      } catch (error) {}
     }
   };
 
@@ -251,6 +254,7 @@ function UserTable() {
           open={open}
           handleClose={handleClose}
           handleChange={handleChange}
+          handleExport={handleExport}
           handleSwitchChange={handleSwitchChange}
           newUser={newUser}
           handleCreate={handleCreate}

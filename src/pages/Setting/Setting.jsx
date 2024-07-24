@@ -4,14 +4,15 @@ import UserTable from "../../components/DataTable/table";
 import "./setting.css";
 
 const Setting = () => {
+  console.log("a");
   return (
     <>
       <Box className="StyledBox">
         <SideNav></SideNav>
         <Box component="main" sx={{ flexGrow: 1, padding: 3, marginTop: 5 }}>
           <Typography
-            variant="H1"
-            component="H1"
+            variant="h4"
+            component="h4"
             marginTop={2}
             marginBottom={2}
           >

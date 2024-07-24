@@ -3,7 +3,7 @@ import { Box, TextField, Typography, IconButton, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import UserDialog from "../GridStyle/Dialog";
-
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
 function SearchAndActions({
@@ -17,6 +17,7 @@ function SearchAndActions({
   handleChange,
   handleSwitchChange,
   newUser,
+  handleExport,
   handleCreate,
   isEditMode,
   handleUpdate,
@@ -83,17 +84,31 @@ function SearchAndActions({
         }}
       >
         {isSmallScreen ? (
-          <Button
-            variant="contained"
-            onClick={handleFind}
-            sx={{
-              backgroundColor: "skyblue",
-              borderRadius: isSmallScreen ? "" : "20%",
-              "&:hover": { backgroundColor: "#a0b7f7" },
-            }}
-          >
-            <SearchIcon />
-          </Button>
+          <>
+            {" "}
+            <Button
+              variant="contained"
+              onClick={handleFind}
+              sx={{
+                backgroundColor: "skyblue",
+                borderRadius: isSmallScreen ? "" : "20%",
+                "&:hover": { backgroundColor: "#a0b7f7" },
+              }}
+            >
+              <SearchIcon />
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleResetFindUser}
+              sx={{
+                backgroundColor: "skyblue",
+                borderRadius: isSmallScreen ? "" : "20%",
+                "&:hover": { backgroundColor: "#a0b7f7" },
+              }}
+            >
+              <RestartAltIcon />
+            </Button>
+          </>
         ) : (
           <Box
             gap={3}
@@ -126,6 +141,17 @@ function SearchAndActions({
             >
               <RestartAltIcon />
             </Button>
+            <Button
+              variant="contained"
+              onClick={handleExport}
+              sx={{
+                backgroundColor: "skyblue",
+                borderRadius: isSmallScreen ? "" : "20%",
+                "&:hover": { backgroundColor: "#a0b7f7" },
+              }}
+            >
+              <FileUploadIcon />
+            </Button>
           </Box>
         )}
 
@@ -147,6 +173,7 @@ function SearchAndActions({
         handleChange={handleChange}
         handleSwitchChange={handleSwitchChange}
         newUser={newUser}
+        handleExport={handleExport}
         handleCreate={handleCreate}
         isEditMode={isEditMode}
         handleUpdate={handleUpdate}
