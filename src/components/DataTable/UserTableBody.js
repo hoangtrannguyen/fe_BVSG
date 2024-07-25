@@ -19,7 +19,7 @@ function UserTableBody({ data, page, rowsPerPage, handleEdit, handleDelete }) {
         <StyledTableRow key={user.id}>
           <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
           <TableCell>{user.code}</TableCell>
-          <TableCell>{getFormattedDate(user.date)}</TableCell>
+          <TableCell>{getFormattedDate(user.dateStartWork)}</TableCell>
           <TableCell>{user.fullName}</TableCell>
           <TableCell>{user.citizenId}</TableCell>
           <TableCell>{user.email}</TableCell>
