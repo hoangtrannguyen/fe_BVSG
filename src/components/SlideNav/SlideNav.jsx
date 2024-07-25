@@ -23,8 +23,12 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import StorageIcon from "@mui/icons-material/Storage";
 import BadgeIcon from "@mui/icons-material/Badge";
 import HomeIcon from "@mui/icons-material/Home";
+import Cookies from "js-cookie";
+import Avatar from "@mui/material/Avatar";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
@@ -78,6 +82,7 @@ const Drawer = styled(MuiDrawer, {
 
 export default function ResponsiveNav() {
   const theme = useTheme();
+  const user = Cookies.get("user");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -111,16 +116,136 @@ export default function ResponsiveNav() {
     handleMenuClose();
   };
 
+  const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("refresh_token");
+    Cookies.remove("user");
+    navigate("/login");
+  };
+
   const drawerContent = (
+    // <div>
+    //   <DrawerHeader>
+    //     <Box
+    //       sx={{
+    //         display: "flex",
+    //         alignItems: "center",
+    //         gap: 2,
+    //         justifyContent: "space-between",
+    //       }}
+    //     >
+    //       <Typography variant="h9" component="div" sx={{ flex: 1 }}>
+    //         {user ? "Welcome " + user : "Welcome!"}
+    //       </Typography>
+    //       <IconButton onClick={() => setOpen(!open)}>
+    //         {theme.direction === "rtl" ? (
+    //           <ChevronRightIcon />
+    //         ) : (
+    //           <ChevronLeftIcon />
+    //         )}
+    //       </IconButton>
+    //     </Box>
+    //   </DrawerHeader>
+    //   <Divider />
+    //   <List>
+    //     <ListItem disablePadding>
+    //       <ListItemButton
+    //         onClick={() => handleNavigation("/")}
+    //         sx={{
+    //           backgroundColor:
+    //             selectedTab === "/" ? theme.palette.action.selected : "inherit",
+    //         }}
+    //       >
+    //         <ListItemIcon>
+    //           <HomeIcon />
+    //         </ListItemIcon>
+    //         <ListItemText primary="Trang chủ" />
+    //       </ListItemButton>
+    //     </ListItem>
+    //     <ListItem disablePadding>
+    //       <ListItemButton
+    //         onClick={() => handleNavigation("/About")}
+    //         sx={{
+    //           backgroundColor:
+    //             selectedTab === "/About"
+    //               ? theme.palette.action.selected
+    //               : "inherit",
+    //         }}
+    //       >
+    //         <ListItemIcon>
+    //           <StorageIcon />
+    //         </ListItemIcon>
+    //         <ListItemText primary="About" />
+    //       </ListItemButton>
+    //     </ListItem>
+    //     <ListItem disablePadding>
+    //       <ListItemButton
+    //         onClick={() => handleNavigation("/Setting")}
+    //         sx={{
+    //           backgroundColor:
+    //             selectedTab === "/Setting"
+    //               ? theme.palette.action.selected
+    //               : "inherit",
+    //         }}
+    //       >
+    //         <ListItemIcon>
+    //           <BadgeIcon />
+    //         </ListItemIcon>
+    //         <ListItemText primary="Quản lý nhân viên" />
+    //       </ListItemButton>
+    //     </ListItem>
+    //   </List>
+    //   <Divider></Divider>
+    //   <List sx={{ mt: "auto" }}>
+    //     <ListItem disablePadding>
+    //       <ListItemButton onClick={handleMenuOpen}>
+    //         <ListItemIcon>
+    //           <Avatar src={"/img/avatar.jpg"} alt="User Avatar" />
+    //         </ListItemIcon>
+    //         <ListItemText primary="Tài khoản" />
+    //       </ListItemButton>
+    //       <Menu
+    //         anchorEl={anchorEl}
+    //         open={Boolean(anchorEl)}
+    //         onClose={handleMenuClose}
+    //       >
+    //         <MenuItem onClick={() => handleNavigation("/account-detail")}>
+    //           <ListItemIcon>
+    //             <AccountCircleIcon fontSize="small" />
+    //           </ListItemIcon>
+    //           Chi tiết tài khoản
+    //         </MenuItem>
+    //         <MenuItem onClick={handleLogout}>
+    //           <ListItemIcon>
+    //             <LogoutIcon fontSize="small" />
+    //           </ListItemIcon>
+    //           Đăng xuất
+    //         </MenuItem>
+    //       </Menu>
+    //     </ListItem>
+    //   </List>
+    // </div>
     <div>
       <DrawerHeader>
-        <IconButton onClick={() => setOpen(!open)}>
-          {theme.direction === "rtl" ? (
-            <ChevronRightIcon />
-          ) : (
-            <ChevronLeftIcon />
-          )}
-        </IconButton>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h9" component="div" sx={{ flex: 1 }}>
+            {user ? "Welcome " + user : "Welcome!"}
+          </Typography>
+          <IconButton onClick={() => setOpen(!open)}>
+            {theme.direction === "rtl" ? (
+              <ChevronRightIcon />
+            ) : (
+              <ChevronLeftIcon />
+            )}
+          </IconButton>
+        </Box>
       </DrawerHeader>
       <Divider />
       <List>
@@ -169,6 +294,35 @@ export default function ResponsiveNav() {
             </ListItemIcon>
             <ListItemText primary="Quản lý nhân viên" />
           </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider />
+      <List sx={{ mt: "auto" }}>
+        <ListItem disablePadding>
+          <ListItemButton onClick={handleMenuOpen}>
+            <ListItemIcon>
+              <Avatar src={"/img/avatar.jpg"} alt="User Avatar" />
+            </ListItemIcon>
+            <ListItemText primary="Tài khoản" />
+          </ListItemButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => handleNavigation("/account-detail")}>
+              <ListItemIcon>
+                <AccountCircleIcon fontSize="small" />
+              </ListItemIcon>
+              Chi tiết tài khoản
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutIcon fontSize="small" />
+              </ListItemIcon>
+              Đăng xuất
+            </MenuItem>
+          </Menu>
         </ListItem>
       </List>
     </div>

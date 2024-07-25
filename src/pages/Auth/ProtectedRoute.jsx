@@ -4,8 +4,9 @@ import Cookies from "js-cookie";
 
 const ProtectedRoute = ({ children }) => {
   const token = Cookies.get("token");
+  const refresh_token = Cookies.get("refresh_token");
 
-  if (!token) {
+  if (!token && !refresh_token) {
     return <Navigate to="/login" replace />;
   }
   return children;

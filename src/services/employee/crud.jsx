@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Snackbar, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function FetchData() {
   const [data, setData] = useState([]);
@@ -12,7 +13,8 @@ function FetchData() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [userDetail, setUserDetail] = useState(null);
-  const [user, setUser] = useState(null); // Thêm state để lưu thông tin người dùng
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   const handleError = (error) => {
     let errorMessage = "An unexpected error occurred.";
@@ -46,6 +48,25 @@ function FetchData() {
     setOpenSnackbar(true);
   };
 
+  const refreshToken = async () => {
+    try {
+      const refreshToken = Cookies.get("refresh_token");
+      const response = await axios.post("api/Accounts/Refresh", {
+        refreshToken,
+      });
+      const newToken = response.data.responseData.token;
+      Cookies.set("token", newToken);
+      return newToken;
+    } catch (error) {
+      Cookies.remove("token");
+      Cookies.remove("refresh_token");
+      Cookies.remove("user");
+      navigate("/login");
+      handleError(error);
+      throw error;
+    }
+  };
+
   const fetchData = useCallback(async (page, pageSize, searchParams) => {
     setLoading(true);
 
@@ -65,7 +86,22 @@ function FetchData() {
       setData(response.data.responseData);
       setTotal(response.data.responseTotal);
     } catch (error) {
-      handleError(error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const newToken = await refreshToken();
+          const response = await axios.get(`api/Employees?${query}`, {
+            headers: {
+              Authorization: `Bearer ${newToken}`,
+            },
+          });
+          setData(response.data.responseData);
+          setTotal(response.data.responseTotal);
+        } catch (refreshError) {
+          handleError(refreshError);
+        }
+      } else {
+        handleError(error);
+      }
     } finally {
       setLoading(false);
     }
@@ -73,17 +109,33 @@ function FetchData() {
 
   const createUser = async (newUser) => {
     try {
-      const token = Cookies.get("token"); // Lấy token từ cookie
+      const token = Cookies.get("token");
       const response = await axios.post("api/Employees", newUser, {
         headers: {
-          Authorization: `Bearer ${token}`, // Gửi token nếu cần
+          Authorization: `Bearer ${token}`,
         },
       });
       if (response.data.responseStatus.responseCode === 200) {
         handleSuccess(response.data.responseStatus.responseMessage);
       }
     } catch (error) {
-      handleError(error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const newToken = await refreshToken();
+          const response = await axios.post("api/Employees", newUser, {
+            headers: {
+              Authorization: `Bearer ${newToken}`,
+            },
+          });
+          if (response.data.responseStatus.responseCode === 200) {
+            handleSuccess(response.data.responseStatus.responseMessage);
+          }
+        } catch (refreshError) {
+          handleError(refreshError);
+        }
+      } else {
+        handleError(error);
+      }
     }
   };
 
@@ -91,14 +143,14 @@ function FetchData() {
     setLoading(true);
     const query = new URLSearchParams(searchParams).toString();
     try {
-      const token = Cookies.get("token"); // Lấy token từ cookie
+      const token = Cookies.get("token");
       const response = await axios.post(
         `api/Employees/export?${query}`,
         {},
         {
           responseType: "blob",
           headers: {
-            Authorization: `Bearer ${token}`, // Gửi token nếu cần
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -120,11 +172,46 @@ function FetchData() {
       link.click();
       document.body.removeChild(link);
 
-      // Cleanup URL object
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      handleError(error);
-      console.error("Error downloading the file:", error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const newToken = await refreshToken();
+          const response = await axios.post(
+            `api/Employees/export?${query}`,
+            {},
+            {
+              responseType: "blob",
+              headers: {
+                Authorization: `Bearer ${newToken}`,
+              },
+            }
+          );
+
+          const disposition = response.headers["content-disposition"];
+          const filename = disposition
+            ? disposition.split(";")[1].trim().split("=")[1].replace(/"/g, "")
+            : "download.xlsx";
+          const blob = new Blob([response.data], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", filename);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          window.URL.revokeObjectURL(url);
+        } catch (refreshError) {
+          handleError(refreshError);
+        }
+      } else {
+        handleError(error);
+      }
     } finally {
       setLoading(false);
     }
@@ -133,15 +220,29 @@ function FetchData() {
   const findById = async (id) => {
     setLoading(true);
     try {
-      const token = Cookies.get("token"); // Lấy token từ cookie
+      const token = Cookies.get("token");
       const response = await axios.get(`api/Employees/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Gửi token nếu cần
+          Authorization: `Bearer ${token}`,
         },
       });
       setUserDetail(response.data.responseData);
     } catch (error) {
-      handleError(error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const newToken = await refreshToken();
+          const response = await axios.get(`api/Employees/${id}`, {
+            headers: {
+              Authorization: `Bearer ${newToken}`,
+            },
+          });
+          setUserDetail(response.data.responseData);
+        } catch (refreshError) {
+          handleError(refreshError);
+        }
+      } else {
+        handleError(error);
+      }
     } finally {
       setLoading(false);
     }
@@ -149,10 +250,10 @@ function FetchData() {
 
   const updateUser = async (id, updatedUser) => {
     try {
-      const token = Cookies.get("token"); // Lấy token từ cookie
+      const token = Cookies.get("token");
       const response = await axios.put(`api/Employees/${id}`, updatedUser, {
         headers: {
-          Authorization: `Bearer ${token}`, // Gửi token nếu cần
+          Authorization: `Bearer ${token}`,
         },
       });
       if (response.data.responseStatus.responseCode === 200) {
@@ -162,7 +263,26 @@ function FetchData() {
         handleSuccess(response.data.responseStatus.responseMessage);
       }
     } catch (error) {
-      handleError(error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const newToken = await refreshToken();
+          const response = await axios.put(`api/Employees/${id}`, updatedUser, {
+            headers: {
+              Authorization: `Bearer ${newToken}`,
+            },
+          });
+          if (response.data.responseStatus.responseCode === 200) {
+            setData((prevData) =>
+              prevData.map((user) => (user.id === id ? updatedUser : user))
+            );
+            handleSuccess(response.data.responseStatus.responseMessage);
+          }
+        } catch (refreshError) {
+          handleError(refreshError);
+        }
+      } else {
+        handleError(error);
+      }
     }
   };
 
@@ -179,7 +299,24 @@ function FetchData() {
       }
       return response;
     } catch (error) {
-      handleError(error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const newToken = await refreshToken();
+          const response = await axios.delete(`api/Employees/${id}`, {
+            headers: {
+              Authorization: `Bearer ${newToken}`,
+            },
+          });
+          if (response.data.responseStatus.responseCode === 200) {
+            handleSuccess(response.data.responseStatus.responseMessage);
+          }
+          return response;
+        } catch (refreshError) {
+          handleError(refreshError);
+        }
+      } else {
+        handleError(error);
+      }
     }
   };
 
@@ -190,10 +327,15 @@ function FetchData() {
         password,
       });
       if (response.data.responseStatus.responseCode === 200) {
-        const token = response.data.responseData;
+        const token = response.data.responseData.token;
+        const refreshToken = response.data.responseData.refreshToken;
         Cookies.set("token", token);
-        setUser(response.data.responseData.user);
+        Cookies.set("refresh_token", refreshToken);
+        Cookies.set("user", response.data.responseData.fullName);
         handleSuccess(response.data.responseStatus.responseMessage);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
       }
     } catch (error) {
       handleError(error);

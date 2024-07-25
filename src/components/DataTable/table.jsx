@@ -58,6 +58,44 @@ function UserTable() {
     otherExpertise: "",
     familyStatus: "",
   };
+
+  const initialUserFields = [
+    { name: "fullName", label: "Họ và tên", required: true },
+    { name: "citizenId", label: "CCCD", required: true },
+    { name: "phone", label: "Số điện thoại", required: true },
+    {
+      name: "dateStartWork",
+      label: "Ngày bắt đầu làm việc",
+      required: true,
+      type: "date",
+    },
+    { name: "email", label: "Email" },
+    { name: "nameEnglish", label: "Tên tiếng anh" },
+    { name: "permanentAddresses", label: "Địa chỉ thường trú" },
+    { name: "temporaryAddress", label: "Địa chỉ tạm trú" },
+    { name: "dateOfBirth", label: "Ngày sinh", type: "date" },
+    {
+      name: "gender",
+      label: "Giới tính",
+      type: "radio",
+      options: ["Male", "Female", "Other"],
+    },
+    {
+      name: "bloodGroup",
+      label: "Nhóm máu",
+      type: "radio",
+      options: ["A", "B", "O", "AB", "Other"],
+    },
+    { name: "maritalStatus", label: "Tình trạng hôn nhân", type: "switch" },
+    { name: "militaryClass", label: "Lớp nghĩa vụ" },
+    { name: "militaryTime", label: "Thời gian nghĩa vụ", type: "date" },
+    { name: "license", label: "Giấy phép lái xe" },
+    { name: "contact", label: "Liên hệ chính" },
+    { name: "academicLevel", label: "Trình độ học vấn" },
+    { name: "language", label: "Ngôn ngữ" },
+    { name: "otherExpertise", label: "Kinh nghiệm khác", type: "textarea" },
+    { name: "familyStatus", label: "Tình trạng gia đình" },
+  ];
   const {
     data,
     total,
@@ -104,6 +142,7 @@ function UserTable() {
           handleExport={handleExport}
           handleSwitchChange={handleSwitchChange}
           newUser={newUser}
+          initialUserFields={initialUserFields}
           handleCreate={handleCreate}
           isEditMode={isEditMode}
           handleUpdate={handleUpdate}

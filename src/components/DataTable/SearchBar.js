@@ -17,6 +17,7 @@ function SearchAndActions({
   handleChange,
   handleSwitchChange,
   newUser,
+  initialUserFields,
   handleExport,
   handleCreate,
   isEditMode,
@@ -157,6 +158,7 @@ function SearchAndActions({
         handleChange={handleChange}
         handleSwitchChange={handleSwitchChange}
         newUser={newUser}
+        initialUserFields={initialUserFields}
         handleExport={handleExport}
         handleCreate={handleCreate}
         isEditMode={isEditMode}

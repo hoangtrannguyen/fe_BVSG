@@ -5,8 +5,8 @@ import FetchData from "../../services/employee/crud";
 function Login() {
   const { loginUser, SnackbarComponent } = FetchData();
   const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
+    email: null,
+    password: null,
   });
 
   const handleChange = (e) => {
