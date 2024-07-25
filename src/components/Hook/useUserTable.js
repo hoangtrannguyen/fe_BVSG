@@ -135,7 +135,7 @@ const useUserTable = (initialSearchFields, initialNewUser) => {
       fullName: "",
       nameEnglish: "",
       citizenId: "",
-      email: null,
+      email: "",
       picture: "",
       dateStartWork: null,
       permanentAddresses: "",

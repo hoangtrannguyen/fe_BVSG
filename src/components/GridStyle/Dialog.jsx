@@ -67,7 +67,7 @@ const UserDialog = ({
 
   const handleUpdateClick = () => {
     if (validateFields()) {
-      handleUpdate(newUser);
+      handleUpdate(newUser.id, newUser);
     }
   };
 

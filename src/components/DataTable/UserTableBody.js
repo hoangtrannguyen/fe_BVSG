@@ -8,7 +8,7 @@ import { StyledTableBody, StyledTableRow } from "./tableStyle";
 const getFormattedDate = (dateString) => {
   if (dateString) {
     const date = new Date(dateString);
-    return isValid(date) ? format(date, "yyyy-MM-dd") : "";
+    return isValid(date) ? format(date, "dd/MM/yyyy") : "";
   }
 };
 
