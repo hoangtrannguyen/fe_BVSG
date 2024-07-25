@@ -1,9 +1,9 @@
 import SideNav from "../../components/SlideNav/SlideNav";
 import { Box, Typography } from "@mui/material";
-import UserTable from "../../components/DataTable/table";
-import "./setting.css";
+import AccountTable from "../../components/AccountMn/Account";
+import "./account.css";
 
-const Setting = () => {
+const Account = () => {
   return (
     <>
       <Box className="StyledBox">
@@ -15,13 +15,13 @@ const Setting = () => {
             marginTop={2}
             marginBottom={2}
           >
-            Quản lý nhân viên
+            Quản lý tài khoản
           </Typography>
-          <UserTable />
+          <AccountTable />
         </Box>
       </Box>
     </>
   );
 };
 
-export default Setting;
+export default Account;

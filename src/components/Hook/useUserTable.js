@@ -1,20 +1,32 @@
 import { useState, useEffect } from "react";
 import FetchData from "../../services/employee/crud";
+import { useData } from "../../services/useData";
+import { useUser } from "../../services/useUser";
+import { useExport } from "../../services/useExport";
+import { useLogin } from "../../services/useLogin";
+import { useSnackBar } from "../../services/useSnackBar";
 import { useMediaQuery } from "@mui/material";
 
 const useUserTable = (initialSearchFields, initialNewUser) => {
-  const {
-    data,
-    total,
-    fetchData,
-    createUser,
-    updateUser,
-    deleteUser,
-    exportUser,
-    findById,
-    userDetail,
-    SnackbarComponent,
-  } = FetchData();
+  // const {
+  //   data,
+  //   total,
+  //   fetchData,
+  //   createUser,
+  //   updateUser,
+  //   deleteUser,
+  //   exportUser,
+  //   findById,
+  //   userDetail,
+  //   SnackbarComponent,
+  // } = FetchData();
+
+  const { data, loading, total, fetchData } = useData();
+  const { userDetail, createUser, updateUser, deleteUser, findById } =
+    useUser();
+  const { loading: exportLoading, exportUser } = useExport();
+  const { loginUser } = useLogin();
+  const { SnackbarComponent } = useSnackBar();
 
   const [openF, setOpenF] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);

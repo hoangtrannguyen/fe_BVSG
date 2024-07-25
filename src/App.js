@@ -3,6 +3,7 @@ import { Routes, BrowserRouter, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Setting from "./pages/Setting/Setting.jsx";
+import Account from "./pages/Account/Account.jsx";
 import Login from "./pages/Auth/Login.jsx";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute.jsx";
 
@@ -23,7 +24,7 @@ export default function App() {
           path="/about"
           element={
             <ProtectedRoute>
-              <About />
+              <Account />
             </ProtectedRoute>
           }
         />
