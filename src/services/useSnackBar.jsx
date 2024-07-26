@@ -10,10 +10,9 @@ export function useSnackBar() {
     setOpenSnackbar(false);
   };
 
-  const showSnackbar = (message, severity = "success") => {
+  const showSnackbar = (message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
-    console.log("Alert", message);
     setOpenSnackbar(true);
   };
 

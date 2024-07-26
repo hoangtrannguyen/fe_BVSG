@@ -173,10 +173,10 @@ export default function ResponsiveNav() {
         </ListItem>
         <ListItem disablePadding>
           <ListItemButton
-            onClick={() => handleNavigation("/About")}
+            onClick={() => handleNavigation("/Register")}
             sx={{
               backgroundColor:
-                selectedTab === "/About"
+                selectedTab === "/Register"
                   ? theme.palette.action.selected
                   : "inherit",
             }}
@@ -184,7 +184,7 @@ export default function ResponsiveNav() {
             <ListItemIcon>
               <StorageIcon />
             </ListItemIcon>
-            <ListItemText primary="About" />
+            <ListItemText primary="Đăng kí" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>

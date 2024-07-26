@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
-import FetchData from "../../services/employee/crud";
+import { useLogin } from "../../services/useLogin";
+import { useSnackBar } from "../../services/useSnackBar";
 
 function Login() {
-  const { loginUser, SnackbarComponent } = FetchData();
+  const { loginUser } = useLogin();
+  const { SnackbarComponent, showSnackbar } = useSnackBar();
   const [loginData, setLoginData] = useState({
-    email: null,
-    password: null,
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -17,10 +19,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await loginUser(loginData.email, loginData.password);
-      console.log("Login successful");
+      const alert = await loginUser(loginData.email, loginData.password);
+      showSnackbar(alert.message, alert.type);
     } catch (error) {
-      console.error("Login failed", error);
+      showSnackbar(alert.message, alert.type);
     }
   };
 
@@ -32,9 +34,16 @@ function Login() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        justifyContent: "center",
         padding: 3,
         maxWidth: 400,
         margin: "auto",
+        border: "2px solid #000",
+        borderRadius: "10px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        height: "fit-content",
+        marginTop: "10%",
+        marginBottom: "10%",
       }}
     >
       <Typography variant="h5">Sign In</Typography>
@@ -66,10 +75,7 @@ function Login() {
       >
         Sign In
       </Button>
-      <Typography variant="body2" sx={{ marginTop: 1 }}>
-        <a href="#">Forget Your Password?</a>
-      </Typography>
-      {SnackbarComponent} {/* Để hiển thị thông báo Snackbar */}
+      {SnackbarComponent}
     </Box>
   );
 }

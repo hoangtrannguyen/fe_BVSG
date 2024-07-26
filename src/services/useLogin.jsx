@@ -1,14 +1,9 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./useAuth";
-import { useSnackBar } from "./useSnackBar";
 
 export function useLogin() {
   const navigate = useNavigate();
-  const { refreshToken } = useAuth();
-  const { showSnackbar } = useSnackBar();
-
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post("api/Accounts/SignIn", {
@@ -21,14 +16,20 @@ export function useLogin() {
         Cookies.set("token", token);
         Cookies.set("refresh_token", refreshToken);
         Cookies.set("user", response.data.responseData.fullName);
-        showSnackbar(response.data.responseStatus.responseMessage);
         setTimeout(() => {
           navigate("/");
         }, 1000);
+        return {
+          message: response.data.responseStatus.responseMessage,
+          type: "success",
+        };
+      } else {
+        return {
+          message: response.data.responseStatus.responseMessage,
+          type: "error",
+        };
       }
-    } catch (error) {
-      showSnackbar("An error occurred while logging in.", "error");
-    }
+    } catch (error) {}
   };
 
   return { loginUser };

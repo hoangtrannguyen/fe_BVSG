@@ -19,7 +19,10 @@ export function useUser() {
         },
       });
       if (response.data.responseStatus.responseCode === 200) {
-        showSnackbar(response.data.responseStatus.responseMessage);
+        return {
+          message: response.data.responseStatus.responseMessage,
+          type: "success",
+        };
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -31,7 +34,10 @@ export function useUser() {
             },
           });
           if (response.data.responseStatus.responseCode === 200) {
-            showSnackbar(response.data.responseStatus.responseMessage);
+            return {
+              message: response.data.responseStatus.responseMessage,
+              type: "success",
+            };
           }
         } catch (refreshError) {
           showSnackbar(
@@ -54,7 +60,10 @@ export function useUser() {
         },
       });
       if (response.data.responseStatus.responseCode === 200) {
-        showSnackbar(response.data.responseStatus.responseMessage);
+        return {
+          message: response.data.responseStatus.responseMessage,
+          type: "success",
+        };
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -66,7 +75,10 @@ export function useUser() {
             },
           });
           if (response.data.responseStatus.responseCode === 200) {
-            showSnackbar(response.data.responseStatus.responseMessage);
+            return {
+              message: response.data.responseStatus.responseMessage,
+              type: "success",
+            };
           }
         } catch (refreshError) {
           showSnackbar(
@@ -89,7 +101,10 @@ export function useUser() {
         },
       });
       if (response.data.responseStatus.responseCode === 200) {
-        showSnackbar(response.data.responseStatus.responseMessage);
+        return {
+          message: response.data.responseStatus.responseMessage,
+          type: "success",
+        };
       }
       return response;
     } catch (error) {
@@ -102,7 +117,10 @@ export function useUser() {
             },
           });
           if (response.data.responseStatus.responseCode === 200) {
-            showSnackbar(response.data.responseStatus.responseMessage);
+            return {
+              message: response.data.responseStatus.responseMessage,
+              type: "success",
+            };
           }
           return response;
         } catch (refreshError) {

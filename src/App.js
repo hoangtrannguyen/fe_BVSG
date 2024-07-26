@@ -6,6 +6,7 @@ import Setting from "./pages/Setting/Setting.jsx";
 import Account from "./pages/Account/Account.jsx";
 import Login from "./pages/Auth/Login.jsx";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute.jsx";
+import Signup from "./pages/Auth/Register.jsx";
 
 export default function App() {
   return (
@@ -33,6 +34,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Setting />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Register"
+          element={
+            <ProtectedRoute>
+              <Signup />
             </ProtectedRoute>
           }
         />

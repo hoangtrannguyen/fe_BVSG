@@ -8,25 +8,12 @@ import { useSnackBar } from "../../services/useSnackBar";
 import { useMediaQuery } from "@mui/material";
 
 const useUserTable = (initialSearchFields, initialNewUser) => {
-  // const {
-  //   data,
-  //   total,
-  //   fetchData,
-  //   createUser,
-  //   updateUser,
-  //   deleteUser,
-  //   exportUser,
-  //   findById,
-  //   userDetail,
-  //   SnackbarComponent,
-  // } = FetchData();
-
   const { data, loading, total, fetchData } = useData();
   const { userDetail, createUser, updateUser, deleteUser, findById } =
     useUser();
   const { loading: exportLoading, exportUser } = useExport();
   const { loginUser } = useLogin();
-  const { SnackbarComponent } = useSnackBar();
+  const { SnackbarComponent, showSnackbar } = useSnackBar();
 
   const [openF, setOpenF] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
@@ -67,15 +54,17 @@ const useUserTable = (initialSearchFields, initialNewUser) => {
     );
   };
 
-  const handleCreate = () => {
-    createUser(newUser);
+  const handleCreate = async () => {
+    const alert = await createUser(newUser);
+    showSnackbar(alert.message, alert.type);
     resetUser();
     setOpen(false);
     setTriggerFetch(true);
   };
 
-  const handleUpdate = (id) => {
-    updateUser(id, newUser);
+  const handleUpdate = async (id) => {
+    const alert = await updateUser(id, newUser);
+    showSnackbar(alert.message, alert.type);
     resetUser();
     setIsEditMode(false);
     setOpen(false);
@@ -115,8 +104,9 @@ const useUserTable = (initialSearchFields, initialNewUser) => {
   const handleDelete = async () => {
     if (userToDelete) {
       try {
-        await deleteUser(userToDelete.id);
+        const alert = await deleteUser(userToDelete.id);
         setTriggerFetch(true);
+        showSnackbar(alert.message, alert.type);
         handleCloseF();
       } catch (error) {
         console.error(error);
