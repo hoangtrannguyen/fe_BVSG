@@ -90,16 +90,19 @@ const UserDialog = ({
     if (validateFields()) {
       handleCreate();
     }
+    setRoles([]);
   };
 
   const handleUpdateClick = () => {
     if (validateFields()) {
       handleUpdate(newUser.id, newUser);
     }
+    setRoles([]);
   };
 
   const handleCloseClick = () => {
     setErrors({});
+    setRoles([]);
     handleClose();
   };
 
