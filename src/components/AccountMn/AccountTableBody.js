@@ -18,7 +18,7 @@ function AccountTableBody({
           <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
           <TableCell>{user.firstName + user.lastName}</TableCell>
           <TableCell>{user.email}</TableCell>
-          <TableCell>{user.roles}</TableCell>
+          <TableCell>{user.roles.join(", ")}</TableCell>
           <TableCell>
             <IconButton onClick={() => handleEdit(user)} color="primary">
               <EditIcon />

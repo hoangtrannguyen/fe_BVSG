@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CrudPermissions from "./CRUDPermission";
 import GridValue from "./gridValue";
-import GridTitle from "./gridValue";
-
+import GridTitle from "./gridHead";
+import FormRow from "./FormGrid";
 import {
   Dialog,
   DialogTitle,
@@ -41,20 +41,29 @@ const UserDialog = ({
   const tables = ["EMP", "ACC"];
 
   const [roles, setRoles] = useState([]);
+
   useEffect(() => {
     const event = { target: { name: "roles", value: roles } };
     handleChange(event);
   }, [roles]);
 
   useEffect(() => {
-    console.log(roles);
-  }, [roles]);
+    if (isEditMode) {
+      setRoles(newUser.roles || []);
+    }
+  }, [newUser.roles, isEditMode]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const validateFields = () => {
     const newErrors = {};
     initialUserFields.forEach((field) => {
+      if (
+        isEditMode &&
+        (field.name === "password" || field.name === "confirmPassword")
+      ) {
+        return;
+      }
       if (field.required && !newUser[field.name]) {
         newErrors[field.name] = `${field.label} là bắt buộc nhập`;
       } else if (
@@ -72,6 +81,7 @@ const UserDialog = ({
     }
     return Object.keys(newErrors).length === 0;
   };
+
   const [selectedTable, setSelectedTable] = useState("");
   const handleTableChange = (event) => {
     setSelectedTable(event.target.value);
@@ -96,6 +106,7 @@ const UserDialog = ({
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
+
   const getFormattedDate = (dateString) => {
     if (dateString) {
       const date = new Date(dateString);
@@ -105,7 +116,7 @@ const UserDialog = ({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth>
       <DialogTitle color="#183c8c" bgcolor="#dce3f6">
         {isEditMode ? "Sửa đổi nhân viên" : "Tạo mới nhân viên"}
       </DialogTitle>
@@ -116,140 +127,107 @@ const UserDialog = ({
               Thông tin nhân viên - {newUser.code}
             </Typography>
           </Grid>
-          {initialUserFields.map((field) => (
-            <GridValue item xs={12} key={field.name}>
-              <GridTitle variant="body1" gutterBottom>
-                {field.label}
-                {field.required && " *"}
-              </GridTitle>
-              {field.type === "roles" ? (
-                <>
-                  <Grid>
-                    <FormControl fullWidth>
-                      <Select
-                        labelId="table-select-label"
-                        value={selectedTable}
-                        onChange={handleTableChange}
-                      >
-                        {tables.map((table) => (
-                          <MenuItem value={table} key={table}>
-                            {table}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    {selectedTable && (
-                      <CrudPermissions
-                        tableName={selectedTable}
-                        roles={roles}
-                        setRoles={setRoles}
-                      />
-                    )}
-                  </Grid>
-                </>
-              ) : // <Grid container direction="row" spacing={1}>
-              //   <Grid item xs={12} sm={6}>
-              //     <FormGroup>
-              //       <RadioGroup
-              //         value={selectedRole}
-              //         onChange={handleRoleChange}
-              //       >
-              //         {roles_names.map((role) => (
-              //           <FormControlLabel
-              //             key={role.value}
-              //             value={role.value}
-              //             control={<Radio />}
-              //             label={role.label}
-              //           />
-              //         ))}
-              //       </RadioGroup>
-              //     </FormGroup>
-              //   </Grid>
-              //   <Grid item xs={12} sm={6}>
-              //     <FormGroup>
-              //       {roles_details.map((detail) => (
-              //         <FormControlLabel
-              //           key={detail.value}
-              //           control={
-              //             <Checkbox
-              //               checked={selectedDetails.includes(detail.value)}
-              //               onChange={handleDetailChange}
-              //               name={detail.value}
-              //             />
-              //           }
-              //           label={detail.label}
-              //         />
-              //       ))}
-              //     </FormGroup>
-              //   </Grid>
-              // </Grid>
-              field.type === "radio" ? (
-                <RadioGroup
-                  row
-                  name={field.name}
-                  value={newUser[field.name]}
-                  onChange={handleChange}
-                >
-                  {field.options.map((option) => (
-                    <FormControlLabel
-                      key={option}
-                      value={option}
-                      control={<Radio />}
-                      label={option}
-                    />
-                  ))}
-                </RadioGroup>
-              ) : field.type === "switch" ? (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={newUser[field.name] === "Married"}
-                      onChange={handleSwitchChange}
+          {initialUserFields.map((field) => {
+            if (
+              (field.name === "password" || field.name === "confirmPassword") &&
+              isEditMode
+            )
+              return null;
+            return (
+              <FormRow key={field.name}>
+                <GridTitle required={field.required}>{field.label}</GridTitle>
+                <GridValue>
+                  {field.type === "roles" ? (
+                    <>
+                      <FormControl fullWidth>
+                        <Select
+                          value={selectedTable}
+                          onChange={handleTableChange}
+                        >
+                          {tables.map((table) => (
+                            <MenuItem value={table} key={table}>
+                              {table}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      {selectedTable && (
+                        <CrudPermissions
+                          tableName={selectedTable}
+                          roles={roles}
+                          setRoles={setRoles}
+                        />
+                      )}
+                    </>
+                  ) : field.type === "radio" ? (
+                    <RadioGroup
+                      row
                       name={field.name}
-                      color="primary"
+                      value={newUser[field.name]}
+                      onChange={handleChange}
+                    >
+                      {field.options.map((option) => (
+                        <FormControlLabel
+                          key={option}
+                          value={option}
+                          control={<Radio />}
+                          label={option}
+                        />
+                      ))}
+                    </RadioGroup>
+                  ) : field.type === "switch" ? (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={newUser[field.name] === "Married"}
+                          onChange={handleSwitchChange}
+                          name={field.name}
+                          color="primary"
+                        />
+                      }
+                      label={
+                        newUser[field.name] === "Married"
+                          ? "Đã kết hôn"
+                          : "Độc thân"
+                      }
                     />
-                  }
-                  label={
-                    newUser[field.name] === "Married"
-                      ? "Đã kết hôn"
-                      : "Độc thân"
-                  }
-                />
-              ) : field.type === "textarea" ? (
-                <TextField
-                  margin="dense"
-                  name={field.name}
-                  label={field.label}
-                  value={newUser[field.name]}
-                  onChange={handleChange}
-                  fullWidth
-                  multiline
-                  rows={4}
-                />
-              ) : (
-                <TextField
-                  margin="dense"
-                  name={field.name}
-                  label={field.label}
-                  type={field.type || "text"}
-                  value={
-                    field.name === "dateOfBirth" ||
-                    field.name === "militaryTime" ||
-                    field.name === "dateStartWork"
-                      ? getFormattedDate(newUser[field.name])
-                      : newUser[field.name]
-                  }
-                  onChange={handleChange}
-                  fullWidth
-                  InputLabelProps={
-                    field.type === "date" ? { shrink: true } : {}
-                  }
-                  error={!!errors[field.name]}
-                  helperText={errors[field.name]}
-                />
-              )}
-            </GridValue>
-          ))}
+                  ) : field.type === "textarea" ? (
+                    <TextField
+                      margin="dense"
+                      name={field.name}
+                      label={field.label}
+                      value={newUser[field.name]}
+                      onChange={handleChange}
+                      fullWidth
+                      multiline
+                      rows={4}
+                    />
+                  ) : (
+                    <TextField
+                      margin="dense"
+                      name={field.name}
+                      label={field.label}
+                      type={field.type || "text"}
+                      value={
+                        field.name === "dateOfBirth" ||
+                        field.name === "militaryTime" ||
+                        field.name === "dateStartWork"
+                          ? getFormattedDate(newUser[field.name])
+                          : newUser[field.name]
+                      }
+                      onChange={handleChange}
+                      fullWidth
+                      InputLabelProps={
+                        field.type === "date" ? { shrink: true } : {}
+                      }
+                      error={!!errors[field.name]}
+                      helperText={errors[field.name]}
+                    />
+                  )}
+                </GridValue>
+              </FormRow>
+            );
+          })}
         </Grid>
       </DialogContent>
       <DialogActions>
