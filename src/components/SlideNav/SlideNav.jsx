@@ -27,7 +27,7 @@ import Cookies from "js-cookie";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
-
+import Signup from "../../services/useRegister";
 const drawerWidth = 300;
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -173,10 +173,10 @@ export default function ResponsiveNav() {
         </ListItem>
         <ListItem disablePadding>
           <ListItemButton
-            onClick={() => handleNavigation("/Register")}
+            onClick={() => handleNavigation("/About")}
             sx={{
               backgroundColor:
-                selectedTab === "/Register"
+                selectedTab === "/About"
                   ? theme.palette.action.selected
                   : "inherit",
             }}
@@ -218,7 +218,7 @@ export default function ResponsiveNav() {
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={() => handleNavigation("/account-detail")}>
+            <MenuItem onClick={() => handleNavigation("/Register")}>
               <ListItemIcon>
                 <AccountCircleIcon fontSize="small" />
               </ListItemIcon>

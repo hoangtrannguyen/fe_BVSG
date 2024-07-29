@@ -3,8 +3,8 @@ import "../DataTable/table.css";
 import styled from "styled-components";
 import SearchAndActions from "../DataTable/SearchBar";
 import UserCard from "../DataTable/UserCard";
-import UserTableHead from "../DataTable/UserTableHead";
-import UserTableBody from "../DataTable/UserTableBody";
+import AccountTableBody from "./AccountTableBody";
+import AccountTableHead from "./AccountTableHead";
 import UserTablePagination from "../DataTable/UserTablePagination";
 import {
   Table,
@@ -20,6 +20,7 @@ import {
   Pagination,
 } from "@mui/material";
 import useUserTable from "../Hook/useUserTable";
+import { type } from "@testing-library/user-event/dist/type";
 
 const StyledTableContainer = styled(TableContainer)`
   background: #fdfdfd;
@@ -34,18 +35,21 @@ function AccountTable() {
   ];
 
   const initialNewUser = {
-    id: "",
     firstName: "",
     lastName: "",
-    roles: "",
+    confirmPassword: "",
+    email: "",
+    password: "",
+    roles: [""],
   };
 
   const initialUserFields = [
-    { name: "id", label: "ID", required: true },
     { name: "firstName", label: "Tên", required: true },
     { name: "lastName", label: "Họ", required: true },
-
-    { name: "roles", label: "Vai trò" },
+    { name: "email", label: "Email", required: true },
+    { name: "confirmPassword", label: "Confirm Password", required: true },
+    { name: "password", label: "Password", required: true },
+    { name: "roles", label: "Vai trò", required: true, type: "roles" },
   ];
   const {
     data,
@@ -75,7 +79,7 @@ function AccountTable() {
     handleFind,
     handleUpdate,
     handleCloseF,
-  } = useUserTable(initialSearchFields, initialNewUser);
+  } = useUserTable(initialSearchFields, initialNewUser, 2);
 
   return (
     <>
@@ -123,8 +127,8 @@ function AccountTable() {
       ) : (
         <StyledTableContainer>
           <Table component={Paper}>
-            <UserTableHead />
-            <UserTableBody
+            <AccountTableHead />
+            <AccountTableBody
               data={data}
               page={page}
               rowsPerPage={rowsPerPage}

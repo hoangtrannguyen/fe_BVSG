@@ -38,6 +38,14 @@ export default function App() {
           }
         />
         <Route
+          path="/About"
+          element={
+            <ProtectedRoute>
+              <About />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/Register"
           element={
             <ProtectedRoute>

@@ -26,10 +26,21 @@ export function useLogin() {
       } else {
         return {
           message: response.data.responseStatus.responseMessage,
+          type: "success",
+        };
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.responseStatus
+      ) {
+        return {
+          message: error.response.data.responseStatus.responseMessage,
           type: "error",
         };
       }
-    } catch (error) {}
+    }
   };
 
   return { loginUser };

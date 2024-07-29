@@ -6,5 +6,4 @@ const GridValue = ({ children, xs = 8, sm = 10, ...props }) => (
     {children}
   </Grid>
 );
-
 export default GridValue;

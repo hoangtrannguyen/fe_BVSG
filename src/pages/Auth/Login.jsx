@@ -22,7 +22,7 @@ function Login() {
       const alert = await loginUser(loginData.email, loginData.password);
       showSnackbar(alert.message, alert.type);
     } catch (error) {
-      showSnackbar(alert.message, alert.type);
+      showSnackbar(error.message, error.type);
     }
   };
 

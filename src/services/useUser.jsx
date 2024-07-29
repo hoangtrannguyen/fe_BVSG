@@ -10,10 +10,16 @@ export function useUser() {
   const { refreshToken } = useAuth();
   const { showSnackbar } = useSnackBar();
 
-  const createUser = async (newUser) => {
+  const apiUrl = (type) => (type === 1 ? "api/Employees" : "api/users");
+
+  const createUser = async (newUser, type = 1) => {
     try {
+      let url = apiUrl(type);
+      if (url === "api/users") {
+        url = "api/accounts/signUp";
+      }
       const token = Cookies.get("token");
-      const response = await axios.post("api/Employees", newUser, {
+      const response = await axios.post(url, newUser, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -28,7 +34,7 @@ export function useUser() {
       if (error.response && error.response.status === 401) {
         try {
           const newToken = await refreshToken();
-          const response = await axios.post("api/Employees", newUser, {
+          const response = await axios.post(apiUrl(type), newUser, {
             headers: {
               Authorization: `Bearer ${newToken}`,
             },
@@ -46,15 +52,24 @@ export function useUser() {
           );
         }
       } else {
-        showSnackbar("An error occurred while creating the user.", "error");
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.responseStatus
+        ) {
+          return {
+            message: error.response.data.responseStatus.responseMessage,
+            type: "error",
+          };
+        }
       }
     }
   };
 
-  const updateUser = async (id, updatedUser) => {
+  const updateUser = async (id, updatedUser, type = 1) => {
     try {
       const token = Cookies.get("token");
-      const response = await axios.put(`api/Employees/${id}`, updatedUser, {
+      const response = await axios.put(`${apiUrl(type)}/${id}`, updatedUser, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -69,11 +84,15 @@ export function useUser() {
       if (error.response && error.response.status === 401) {
         try {
           const newToken = await refreshToken();
-          const response = await axios.put(`api/Employees/${id}`, updatedUser, {
-            headers: {
-              Authorization: `Bearer ${newToken}`,
-            },
-          });
+          const response = await axios.put(
+            `${apiUrl(type)}/${id}`,
+            updatedUser,
+            {
+              headers: {
+                Authorization: `Bearer ${newToken}`,
+              },
+            }
+          );
           if (response.data.responseStatus.responseCode === 200) {
             return {
               message: response.data.responseStatus.responseMessage,
@@ -92,10 +111,10 @@ export function useUser() {
     }
   };
 
-  const deleteUser = async (id) => {
+  const deleteUser = async (id, type = 1) => {
     try {
       const token = Cookies.get("token");
-      const response = await axios.delete(`api/Employees/${id}`, {
+      const response = await axios.delete(`${apiUrl(type)}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -111,7 +130,7 @@ export function useUser() {
       if (error.response && error.response.status === 401) {
         try {
           const newToken = await refreshToken();
-          const response = await axios.delete(`api/Employees/${id}`, {
+          const response = await axios.delete(`${apiUrl(type)}/${id}`, {
             headers: {
               Authorization: `Bearer ${newToken}`,
             },
@@ -135,10 +154,10 @@ export function useUser() {
     }
   };
 
-  const findById = async (id) => {
+  const findById = async (id, type = 1) => {
     try {
       const token = Cookies.get("token");
-      const response = await axios.get(`api/Employees/${id}`, {
+      const response = await axios.get(`${apiUrl(type)}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -148,7 +167,7 @@ export function useUser() {
       if (error.response && error.response.status === 401) {
         try {
           const newToken = await refreshToken();
-          const response = await axios.get(`api/Employees/${id}`, {
+          const response = await axios.get(`${apiUrl(type)}/${id}`, {
             headers: {
               Authorization: `Bearer ${newToken}`,
             },

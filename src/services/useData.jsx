@@ -12,8 +12,10 @@ export function useData() {
   const { showSnackbar } = useSnackBar();
 
   const fetchData = useCallback(
-    async (page, pageSize, searchParams) => {
+    async (page = 1, type = 2, pageSize = 10, searchParams = {}) => {
       setLoading(true);
+
+      const url = type === 1 ? "api/Employees" : "api/users";
 
       const query = new URLSearchParams({
         ...searchParams,
@@ -23,7 +25,7 @@ export function useData() {
 
       try {
         const token = Cookies.get("token");
-        const response = await axios.get(`api/Employees?${query}`, {
+        const response = await axios.get(`${url}?${query}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -34,7 +36,7 @@ export function useData() {
         if (error.response && error.response.status === 401) {
           try {
             const newToken = await refreshToken();
-            const response = await axios.get(`api/Employees?${query}`, {
+            const response = await axios.get(`${url}?${query}`, {
               headers: {
                 Authorization: `Bearer ${newToken}`,
               },

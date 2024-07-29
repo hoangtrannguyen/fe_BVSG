@@ -1,48 +1,41 @@
 import { useState, useEffect } from "react";
-import FetchData from "../../services/employee/crud";
 import { useData } from "../../services/useData";
 import { useUser } from "../../services/useUser";
 import { useExport } from "../../services/useExport";
-import { useLogin } from "../../services/useLogin";
 import { useSnackBar } from "../../services/useSnackBar";
 import { useMediaQuery } from "@mui/material";
 
-const useUserTable = (initialSearchFields, initialNewUser) => {
-  const { data, loading, total, fetchData } = useData();
+const useUserTable = (initialSearchFields, initialNewUser, url_des) => {
+  const { data, total, fetchData } = useData();
   const { userDetail, createUser, updateUser, deleteUser, findById } =
     useUser();
-  const { loading: exportLoading, exportUser } = useExport();
-  const { loginUser } = useLogin();
+  const { exportUser } = useExport();
   const { SnackbarComponent, showSnackbar } = useSnackBar();
-
   const [openF, setOpenF] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
-
   const [newUser, setNewUser] = useState(initialNewUser);
-
   const [isEditMode, setIsEditMode] = useState(false);
   const [searchFields, setSearchFields] = useState(initialSearchFields);
-
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [triggerFetch, setTriggerFetch] = useState(true);
-
+  const url = url_des;
   const isSmallScreen = useMediaQuery("(max-width: 1100px)");
 
   const handleChange = (e) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+    setNewUser({ ...newUser, [e.target.name]: e.target.value }, url);
   };
 
   const handleEdit = (user) => {
-    findById(user.id);
+    findById(user.id, url);
     setIsEditMode(true);
     setOpen(true);
   };
 
   useEffect(() => {
     if (userDetail) {
-      setNewUser(userDetail);
+      setNewUser(userDetail, url);
     }
   }, [userDetail]);
 
@@ -55,17 +48,21 @@ const useUserTable = (initialSearchFields, initialNewUser) => {
   };
 
   const handleCreate = async () => {
-    const alert = await createUser(newUser);
-    showSnackbar(alert.message, alert.type);
-    resetUser();
+    try {
+      const alert = await createUser(newUser, url);
+      showSnackbar(alert.message, alert.type);
+    } catch (error) {
+      showSnackbar(error.message, error.type);
+    }
+    resetUser(initialNewUser);
     setOpen(false);
     setTriggerFetch(true);
   };
 
   const handleUpdate = async (id) => {
-    const alert = await updateUser(id, newUser);
+    const alert = await updateUser(id, newUser, url);
     showSnackbar(alert.message, alert.type);
-    resetUser();
+    resetUser(initialNewUser);
     setIsEditMode(false);
     setOpen(false);
     setTriggerFetch(true);
@@ -95,8 +92,9 @@ const useUserTable = (initialSearchFields, initialNewUser) => {
   };
 
   useEffect(() => {
+    console.log(url);
     if (triggerFetch) {
-      fetchData(page, rowsPerPage, getSearchParams(searchFields));
+      fetchData(page, url, rowsPerPage, getSearchParams(searchFields));
       setTriggerFetch(false);
     }
   }, [fetchData, page, rowsPerPage, searchFields, triggerFetch]);
@@ -104,7 +102,7 @@ const useUserTable = (initialSearchFields, initialNewUser) => {
   const handleDelete = async () => {
     if (userToDelete) {
       try {
-        const alert = await deleteUser(userToDelete.id);
+        const alert = await deleteUser(userToDelete.id, url);
         setTriggerFetch(true);
         showSnackbar(alert.message, alert.type);
         handleCloseF();
@@ -129,33 +127,17 @@ const useUserTable = (initialSearchFields, initialNewUser) => {
   const handleClose = () => {
     setOpen(false);
     setIsEditMode(false);
-    resetUser();
+    resetUser(initialNewUser);
   };
 
-  const resetUser = () => {
-    setNewUser({
-      fullName: "",
-      nameEnglish: "",
-      citizenId: "",
-      email: "",
-      picture: "",
-      dateStartWork: null,
-      permanentAddresses: "",
-      temporaryAddress: "",
-      dateOfBirth: null,
-      gender: "",
-      bloodGroup: "",
-      phone: "",
-      phoneOther: "",
-      maritalStatus: "",
-      militaryClass: "",
-      militaryTime: "",
-      license: "",
-      contact: "",
-      academicLevel: "",
-      language: "",
-      otherExpertise: "",
-      familyStatus: "",
+  const resetUser = (initialNewUser) => {
+    setNewUser((prevState) => {
+      const resetState = Object.keys(initialNewUser).reduce((acc, key) => {
+        acc[key] = initialNewUser[key];
+        return acc;
+      }, {});
+
+      return resetState;
     });
   };
 

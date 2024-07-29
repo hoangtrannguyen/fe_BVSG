@@ -38,7 +38,7 @@ function UserTable() {
     fullName: "",
     nameEnglish: "",
     citizenId: "",
-    email: null,
+    email: "",
     picture: null,
     dateStartWork: "",
     permanentAddresses: "",
@@ -124,7 +124,7 @@ function UserTable() {
     handleFind,
     handleUpdate,
     handleCloseF,
-  } = useUserTable(initialSearchFields, initialNewUser);
+  } = useUserTable(initialSearchFields, initialNewUser, 1);
 
   return (
     <>
